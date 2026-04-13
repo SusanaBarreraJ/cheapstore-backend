@@ -38,6 +38,6 @@ public class Usuario {
     public Boolean getEstado() { return estado; }
     public void setEstado(Boolean estado) { this.estado = estado; }
 
-    public Role getRol() { return rol; }
+    public Rol getRol() { return rol; }
     public void setRol(Rol rol) { this.rol = rol; }
 }
