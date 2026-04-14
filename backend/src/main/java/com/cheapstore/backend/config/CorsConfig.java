@@ -17,7 +17,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "http://localhost:4200",
+                "http://127.0.0.1:4200",
                 "https://upgraded-umbrella-4jgr7p4x549wf75qx-4200.app.github.dev"
         ));
 
