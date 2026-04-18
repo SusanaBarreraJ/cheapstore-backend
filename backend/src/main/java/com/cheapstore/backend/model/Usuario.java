@@ -40,6 +40,11 @@ public class Usuario {
     @Column(name = "password_updated_at")
     private LocalDateTime passwordUpdatedAt;
 
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

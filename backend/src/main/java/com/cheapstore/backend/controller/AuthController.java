@@ -1,14 +1,11 @@
 package com.cheapstore.backend.controller;
 
 import com.cheapstore.backend.model.Usuario;
-import com.cheapstore.backend.repository.UsuarioRepository;
-import com.cheapstore.backend.security.JwtService;
+import com.cheapstore.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -16,66 +13,45 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
-    private UsuarioRepository repo;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Usuario user) {
+        return authService.login(user);
+    }
 
-        Usuario dbUser = repo.findByEmail(user.getEmail())
-                .orElse(null);
-
-        Map<String, String> response = new HashMap<>();
-
-        if (dbUser == null) {
-            response.put("error", "Usuario no existe");
-            return ResponseEntity.status(401).body(response);
-        }
-
-        if (!dbUser.getEstado()) {
-            response.put("error", "Usuario desactivado");
-            return ResponseEntity.status(403).body(response);
-        }
-
-        if (!dbUser.getVerified()) {
-            response.put("error", "Cuenta no verificada");
-            return ResponseEntity.status(403).body(response);
-        }
-
-        if (!passwordEncoder.matches(user.getPasswordHash(), dbUser.getPasswordHash())) {
-            response.put("error", "Password incorrecto");
-            return ResponseEntity.status(401).body(response);
-        }
-
-        String token = jwtService.generateToken(dbUser.getEmail());
-
-        response.put("token", token);
-        return ResponseEntity.ok(response);
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        return authService.logout();
     }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody Usuario user) {
+        return authService.register(user);
+    }
 
-        Map<String, String> response = new HashMap<>();
+    @GetMapping("/verify")
+    public ResponseEntity<String> verify(@RequestParam("token") String token) {
+        return authService.verify(token);
+    }
 
-        if (repo.findByEmail(user.getEmail()).isPresent()) {
-            response.put("error", "Email ya registrado");
-            return ResponseEntity.status(400).body(response);
-        }
+    @PostMapping("/resend-verification")
+    public ResponseEntity<String> resendVerification(@RequestParam String email) {
+        return authService.resendVerification(email);
+    }
 
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+    //http://localhost:8080/auth/forgot-password?email=susanabarrerajara@gmail.com
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        return authService.forgotPassword(email);
+    }
 
-        user.setEstado(true);
-        user.setVerified(false);
+    //http://localhost:8080/auth/reset-password?token=fe29e319-1b17-4cc1-8c2b-bae6db9e5757&newPassword=999999
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestParam String token,
+            @RequestParam String newPassword) {
 
-        Usuario saved = repo.save(user);
-
-        response.put("message", "Usuario creado. Verifica tu cuenta.");
-        return ResponseEntity.ok(response);
+        return authService.resetPassword(token, newPassword);
     }
 }
