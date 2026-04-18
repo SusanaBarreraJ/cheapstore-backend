@@ -44,4 +44,8 @@ public class VerificationTokenService {
     public void deleteToken(VerificationToken vt) {
         repo.delete(vt);
     }
+
+    public void deleteAllByUsuario(Usuario usuario) {
+        repo.deleteByUsuario(usuario);
+    }
 }

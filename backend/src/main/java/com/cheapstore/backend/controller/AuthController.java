@@ -21,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
+    public ResponseEntity<Map<String, String>> logout() {
         return authService.logout();
     }
 
@@ -31,24 +31,24 @@ public class AuthController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verify(@RequestParam("token") String token) {
+    public ResponseEntity<Map<String, String>> verify(@RequestParam("token") String token) {
         return authService.verify(token);
     }
 
     @PostMapping("/resend-verification")
-    public ResponseEntity<String> resendVerification(@RequestParam String email) {
+    public ResponseEntity<Map<String, String>> resendVerification(@RequestParam String email) {
         return authService.resendVerification(email);
     }
 
     //http://localhost:8080/auth/forgot-password?email=susanabarrerajara@gmail.com
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestParam String email) {
         return authService.forgotPassword(email);
     }
 
     //http://localhost:8080/auth/reset-password?token=fe29e319-1b17-4cc1-8c2b-bae6db9e5757&newPassword=999999
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(
+    public ResponseEntity<Map<String, String>> resetPassword(
             @RequestParam String token,
             @RequestParam String newPassword) {
 

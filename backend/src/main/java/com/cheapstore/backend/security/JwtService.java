@@ -5,6 +5,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
+import com.cheapstore.backend.model.Usuario;
+
 import java.security.Key;
 import java.util.Date;
 
@@ -13,11 +15,12 @@ public class JwtService {
 
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(String email) {
+    public String generateToken(Usuario user) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(user.getEmail())
+                .claim("rol", user.getRol().getNombre()) // opcional 🔥
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hora
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(key)
                 .compact();
     }
